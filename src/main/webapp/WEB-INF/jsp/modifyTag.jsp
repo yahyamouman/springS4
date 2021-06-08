@@ -184,35 +184,12 @@
                 </nav>
                 <!-- End of Topbar -->
 
-        <%--
-		<%
-			if (request.getAttribute("ownerDeleteError") != null){
-		%>
-			<script>
-				alert("vous ne pouvez pas supprimer votre compte des utilisateur de ce Tag");
-			</script>
-		<%
-			}
-			else{
-				User member = (User)request.getAttribute("member");
-				if (member == null && request.getAttribute("marker") == null){
-		%>
-				<script>
-					alert("le membre que vous avez saisit n'existe pas!");
-				</script>
-		<%
-				}
-			}
-		
-	%>
-	--%>
 			<div class="container-fluid">
 
                     <!-- Page Heading -->
 	<h2> tag name : 
-	<%
-	Tag tg = (Tag) request.getAttribute("_TAG");
-	out.println(tg.tagName +" " + tg.tagId); %> </h2>
+
+    <c:out value="${tag.name} ${tag.tagId}"/></h2>
 	<section>
 		<header>
 			<div>
@@ -223,8 +200,8 @@
 			</div>
 			<div>
 				<form method='post' action="ModifyTags">
-					<input type="text" name="tagName" value='<% out.println(tg.tagName); %>' style='display:none;'>
-					<input type="text" name="Nmember" placeholder="Email du membre a ajouter">
+					<input type="text" name="tagName" value='<c:out value="${tag.name}"/>' style='display:none;'>
+					<input type="text" name="member" placeholder="Email du membre a ajouter">
 					<input type="submit" value="Ajouter">
 				</form>
 			</div>
@@ -235,12 +212,7 @@
 
 			<!-- Begin Page Content -->
 			<div class="row">
-	<%
-			DAOFactory db = DAOFactory.getInstance();
-			try{
-				ArrayList<User> members = tg.tagged;
-				for (User t : members){
-		%>
+            <c:forEach items="${members}" var="member">
 								
                         <!-- Earnings (Annual) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
@@ -249,13 +221,13 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
 	                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-	                                        <% out.println(t.email);%>
+                                                <c:out value="${member.email}"/>
 	                                        </div>
                                         </div>
-                                	<form method="post" action="ModifyTags" >
+                                	<form method="post" action="DeleteMember" >
                                         <div class="col-auto">
-											<input type="text" name="tagName" value='<% out.println(tg.tagName); %>' style='display:none;'>			
-											<input type="text" name="Demail" value="<% out.println(t.email);%>" style='display:none;'/>
+											<input type="text" name="tagId" value='<c:out value="${tag.id}"/>' style='display:none;'>
+											<input type="text" name="userId" value="<c:out value="${member.id}"/>" style='display:none;'/>
 											<input type="submit" value="Delete" >
                                         </div>
                                     </form>
@@ -263,18 +235,14 @@
                                 </div>
                             </div>
                         </div>                         	
-							<%
-									}
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							%>
+            </c:forEach>
                                    
 		</div>
 	</main>
-		</section>
-		</div>
-			
+    </section>
+            </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

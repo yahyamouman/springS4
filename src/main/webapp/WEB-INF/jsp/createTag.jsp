@@ -197,12 +197,12 @@
 	        		
 	        
 	    <header style="display:flex; justify-content:space-between">
-			<form method="post" action="CreateTags">
-				<input type="text" name="tagName" placeholder="input Tag name"/>
+			<form method="post" action="addTag">
+				<input type="text" name="name" placeholder="input Tag name"/>
 				<input type="submit" value="Create Tag"/>
 			</form>	
-			<form method="post" action="RemoveTags">
-				<input type="text" name="tagName" placeholder="input Tag name"/>
+			<form method="post" action="deleteTag">
+				<input type="text" name="name" placeholder="input Tag name"/>
 				<input type="submit" value="Delete Tag"/>
 			</form>	
 			<form method="post" action="ModifyTags">
@@ -226,16 +226,15 @@
                                                 view Tag members
                                          </div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-												<form method="post" action="ModifyTags">
-													<input type="text" name="tagName" value="<c:out value="${tag.name}"/>" style="display:none;"/>
-													<input type="text" name="marker" value="1" style="display:none;">
+												<form method="post" action="/ModifyTags/${tag.tagId}">
+													<input type="text" name="tagId" value="<c:out value="${tag.tagId}"/>" style="display:none;"/>
 													<input type="submit" value="<c:out value="${tag.name}"/>" style="text-align:left; width:100%; border:none; background-color:white;"/>
-												</form>
-											</div>
+                                                </form>
+                                               </div>
                                         </div>
-                                	<form method="post" action="RemoveTags" >
+                                	<form method="post" action="/deleteTag" >
                                         <div class="col-auto">
-											<input type="text" name="tagName" value='<c:out value="${tag.name}"/>' style='display:none;'/>
+											<input type="text" name="name" value='<c:out value="${tag.name}"/>' style='display:none;'/>
                                             <input type="submit" value="Delete"/>
                                         </div>
                                     </form>

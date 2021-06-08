@@ -20,6 +20,7 @@ public class TagServices {
     UserRepository userRepository;
     @Autowired
     UserTagRepository userTagRepository;
+
     public Collection<Tag> getUserTags(long userId){
         User user = userRepository.findById(userId).get();
         Collection<Tag> tags = new ArrayList<>();
@@ -27,6 +28,15 @@ public class TagServices {
             tags.add(userTag.getUsedTag());
         }
         return tags;
+    }
+
+    public Collection<User> getTagMembers(long tagId){
+        Tag tag = tagRepository.findById(tagId).get();
+        Collection<User> users = new ArrayList<>();
+        for(UserTag userTag : tag.getUserTags()){
+            users.add(userTag.getTaggedUser());
+        }
+        return users;
     }
 
     public void addUserToTag(long userId, long tagId){

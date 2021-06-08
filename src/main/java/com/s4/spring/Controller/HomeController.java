@@ -2,8 +2,10 @@ package com.s4.spring.Controller;
 
 import com.s4.spring.Entity.Tag;
 import com.s4.spring.Entity.User;
+import com.s4.spring.Entity.UserTag;
 import com.s4.spring.Repository.TagRepository;
 import com.s4.spring.Repository.UserRepository;
+import com.s4.spring.Repository.UserTagRepository;
 import com.s4.spring.Security.entity.MyUserDetails;
 import com.s4.spring.Services.TagServices;
 import org.apache.coyote.Request;
@@ -82,6 +84,8 @@ public class HomeController {
 
     @Autowired
     TagRepository tagRepository;
+    @Autowired
+    UserTagRepository userTagRepository;
 
     @RequestMapping(value = "/tag")
     @ResponseBody
@@ -97,6 +101,62 @@ public class HomeController {
         tag2.setOwner(user);
         tag2 = tagRepository.save(tag2);
         return new Tag[]{tag, tag2};
+    }
+
+
+    @RequestMapping(value = "/DeleteMember")
+    public String createTag(Model model, Authentication authentication, @RequestAttribute(name="tagId") long tagId, @RequestAttribute(name="userId") long userId){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        Tag tag = tagRepository.findById(tagId).get();
+        UserTag userTag = userTagRepository.findUserTagByTaggedUserAndUsedTag(user,tag);
+        if(tag.getOwner().getUserId()==(user.getUserId())){
+            userTagRepository.delete(userTag);
+            userTagRepository.flush();
+        }
+
+        model.addAttribute("user",user);
+        model.addAttribute("tag",tag);
+        model.addAttribute("members",tagServices.getTagMembers(tagId));
+        return "modifyTag";
+    }
+
+    @RequestMapping(value = "/ModifyTags/{tagId}")
+    public String modifyTag(Authentication authentication, Model model,@RequestParam(name="tagId") String tagId){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        Tag tag = tagRepository.findById(Long.parseLong(tagId)).get();
+        model.addAttribute("user",user);
+        model.addAttribute("tag",tag);
+        model.addAttribute("members",tagServices.getTagMembers(Long.parseLong(tagId)));
+        return "modifyTag";
+    }
+
+    @RequestMapping(value =  "/addTag")
+    public String addTag(Authentication authentication, Model model, Tag tag){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        Tag newTag = new Tag();
+        newTag.setName(tag.getName());
+        newTag.setOwner(user);
+        tagRepository.saveAndFlush(newTag);
+
+        model.addAttribute("user",user);
+        model.addAttribute("tags",user.getOwnedTags());
+        return "createTag";
+    }
+
+    @RequestMapping(value =  "/deleteTag")
+    public String deleteTag(Authentication authentication, Model model, Tag tag){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        Tag newTag = tagRepository.getTagByName(tag.getName());
+        tagRepository.delete(newTag);
+        tagRepository.flush();
+
+        model.addAttribute("user",user);
+        model.addAttribute("tags",user.getOwnedTags());
+        return "createTag";
     }
 
 }
