@@ -25,7 +25,9 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long tagId;
 
-    private String owner;
+    @ManyToOne
+    @JoinColumn
+    private User owner;
 
     private String name;
 

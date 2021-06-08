@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
          pageEncoding="ISO-8859-1"%>
-
+	
 <!DOCTYPE html>
 <html lang="en">
 
@@ -63,7 +63,7 @@
 
             <!-- Nav Item - Utilities Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="/CreateTags" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
+                <a class="nav-link collapsed" href="CreateTags" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
                     <span>Creer une etiquette</span>
                 </a>
@@ -150,6 +150,7 @@
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">
                                 
                                 <c:out value="${user.firstName}"/>  <c:out value="${user.lastName}"/>
+
                                 </span>
                                 <img class="img-profile rounded-circle"
                                     src="img/undraw_profile.svg">
@@ -183,201 +184,97 @@
                 </nav>
                 <!-- End of Topbar -->
 
+        <%--
+		<%
+			if (request.getAttribute("ownerDeleteError") != null){
+		%>
+			<script>
+				alert("vous ne pouvez pas supprimer votre compte des utilisateur de ce Tag");
+			</script>
+		<%
+			}
+			else{
+				User member = (User)request.getAttribute("member");
+				if (member == null && request.getAttribute("marker") == null){
+		%>
+				<script>
+					alert("le membre que vous avez saisit n'existe pas!");
+				</script>
+		<%
+				}
+			}
+		
+	%>
+	--%>
+			<div class="container-fluid">
 
+                    <!-- Page Heading -->
+	<h2> tag name : 
+	<%
+	Tag tg = (Tag) request.getAttribute("_TAG");
+	out.println(tg.tagName +" " + tg.tagId); %> </h2>
+	<section>
+		<header>
+			<div>
+				Add Members from Excel
+			</div>
+			<div>
+				Add Members from another Tag
+			</div>
+			<div>
+				<form method='post' action="ModifyTags">
+					<input type="text" name="tagName" value='<% out.println(tg.tagName); %>' style='display:none;'>
+					<input type="text" name="Nmember" placeholder="Email du membre a ajouter">
+					<input type="submit" value="Ajouter">
+				</form>
+			</div>
+		</header>
+		
+		<main>
+		<br> <br>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                <div class="container">
-                <h2>ENSIAS TEAMS</h2>
-                <p>
-est une platforme  collaborative personnalisable qui intègre  la visioconférence , le stockage et le transfert de fichiers
-La messagerie instantanée permettant d'échanger en équipe  ou en privé tout en conservant une trace de tous les échanges.
-Cette platforme avait pour but de faciliter l'ajout des membres aux équipes un par un , qui est un travail répététif , alors notre platforme se caractérise par les étiquettes qui contient un Nom et 
-des membres associés à elle ( exemple : étiquette GL qui contient les étudiants de cette filière alors l'ajout à chaque groupe se fait juste en spécifiant cette étiquette ) .
-                </p>
-                </div>
-					<div class="row">
-					
-                            <div class="col-xl-3 col-md-9 mb-7">
-                                                <a class="nav-link" href="Groups">
-
-                                    <div class="card border-left-success shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">MES GROUPES </div>
-                                                </div>
-                                                <div class="col-auto">
-                                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                                </div>
-                                            </div>
+			<!-- Begin Page Content -->
+			<div class="row">
+	<%
+			DAOFactory db = DAOFactory.getInstance();
+			try{
+				ArrayList<User> members = tg.tagged;
+				for (User t : members){
+		%>
+								
+                        <!-- Earnings (Annual) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+	                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+	                                        <% out.println(t.email);%>
+	                                        </div>
                                         </div>
-                                    </div>
-                                </a>
-                            </div>
-                
-                            <div class="col-xl-3 col-md-9 mb-7">
-                                                <a class="nav-link collapsed" href="CreateTeam"  data-target="#collapseTwo" aria-expanded="true">
-
-                                    <div class="card border-left-info shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">CREER UNE EQUIPE</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                            </div>
+                                	<form method="post" action="ModifyTags" >
+                                        <div class="col-auto">
+											<input type="text" name="tagName" value='<% out.println(tg.tagName); %>' style='display:none;'>			
+											<input type="text" name="Demail" value="<% out.println(t.email);%>" style='display:none;'/>
+											<input type="submit" value="Delete" >
                                         </div>
+                                    </form>
                                     </div>
-                                </a>
+                                </div>
                             </div>
-
-                            <div class="col-xl-3 col-md-9 mb-7">
-                                                <a class="nav-link collapsed" href="CreateTags" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-                                    <div class="card border-left-info shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">CREER UNE ETIQUETTE</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            
-                            <div class="col-xl-3 col-md-9 mb-7">
-                                                <a class="nav-link" href="BoiteMessages" role="button" >
-
-                                    <div class="card border-left-info shadow h-100 py-2">
-                                        <div class="card-body">
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col mr-2">
-                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">MESSAGERIE</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-auto">
-                                                <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            
-                            
-
-
-                        </div>
-                    </div>
-                <!-- /.container-fluid -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <!-- End of Main Content -->
-
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; ENSIAS TEAMS 2021</span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
-
-        </div>
-        <!-- End of Content Wrapper -->
-
-    </div>
-
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">voulez vous se quitter ?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">ï¿½</span>
-                    </button>
-                </div>
-                <div class="modal-body">Selectionnez Deconnexion ci-dessous si vous etes pret ï¿½ mettre fin ï¿½ votre session en cours.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Annuler</button>
-                    <a class="btn btn-primary" href="/logout">Deconnexion</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
+                        </div>                         	
+							<%
+									}
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							%>
+                                   
+		</div>
+	</main>
+		</section>
+		</div>
+			
 </body>
-
 </html>

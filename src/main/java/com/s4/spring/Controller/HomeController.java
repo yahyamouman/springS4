@@ -1,8 +1,11 @@
 package com.s4.spring.Controller;
 
+import com.s4.spring.Entity.Tag;
 import com.s4.spring.Entity.User;
+import com.s4.spring.Repository.TagRepository;
 import com.s4.spring.Repository.UserRepository;
 import com.s4.spring.Security.entity.MyUserDetails;
+import com.s4.spring.Services.TagServices;
 import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -64,4 +67,36 @@ public class HomeController {
     public String register(Authentication authentication){
         return "register";
     }
+
+    @Autowired
+    TagServices tagServices;
+
+    @RequestMapping(value = "/CreateTags")
+    public String createTag(Authentication authentication, Model model){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        model.addAttribute("user",user);
+        model.addAttribute("tags",user.getOwnedTags());
+        return "createTag";
+    }
+
+    @Autowired
+    TagRepository tagRepository;
+
+    @RequestMapping(value = "/tag")
+    @ResponseBody
+    public Tag[] tagRandom(Authentication authentication, Model model) {
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        Tag tag = new Tag();
+        tag.setName("GL");
+        tag.setOwner(user);
+        tagRepository.save(tag);
+        Tag tag2 = new Tag();
+        tag2.setName("GL");
+        tag2.setOwner(user);
+        tag2 = tagRepository.save(tag2);
+        return new Tag[]{tag, tag2};
+    }
+
 }

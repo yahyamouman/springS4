@@ -46,6 +46,9 @@ public class User {
     @OneToMany(mappedBy = "taggedUser")
     private Collection<UserTag> userTags;
 
+    @OneToMany(mappedBy = "owner")
+    private Collection<Tag> ownedTags;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "sender")
     private Collection<Message> sentMessages;
 
