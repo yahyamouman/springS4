@@ -32,24 +32,10 @@ public class HomeController {
         return "home";
     }
 
-    /*
-    @RequestMapping("/adduser")
-    @ResponseBody
-    public User addUser(Authentication authentication){
-        User user = new User();
-        user.setEmail("faleh@gmail.com");
-        user.setUsername("faleh");
-        user.setPassword("azerty");
-        userRepository.save(user);
-        userRepository.flush();
-
-        return user;
-    }*/
-
     @Autowired
     GroupRepository groupRepository;
 
-    @RequestMapping(value = "/adduser", method = RequestMethod.POST)
+    /*@RequestMapping(value = "/adduser", method = RequestMethod.POST)
     public String register(User user){
         user.setUsername(user.getEmail());
         userRepository.save(user);
@@ -62,7 +48,7 @@ public class HomeController {
 
 
         return "redirect:/login";
-    }
+    }*/
 
     @RequestMapping(value = "/")
     public String home(Authentication authentication, Model model){
@@ -72,7 +58,7 @@ public class HomeController {
         return "index";
     }
 
-    @GetMapping("/register")
+    /*@GetMapping("/register")
     public String register(Authentication authentication){
         return "register";
     }
@@ -235,6 +221,6 @@ public class HomeController {
         model.addAttribute("user",user);
         model.addAttribute("teams",user.getTeams());
         return "showTeams";
-    }
+    }*/
 
 }
