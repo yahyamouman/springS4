@@ -16,7 +16,7 @@ public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long eventId;
+    private long teamId;
 
     private String name;
 

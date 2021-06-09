@@ -37,7 +37,6 @@ public class User {
 
     private String address;
 
-    @ColumnDefault("ROLE_USER")
     private String roles="ROLE_USER";
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "owner")
@@ -48,6 +47,9 @@ public class User {
 
     @OneToMany(mappedBy = "owner")
     private Collection<Tag> ownedTags;
+
+    @OneToMany(mappedBy = "owner")
+    private Collection<Team> teams;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "sender")
     private Collection<Message> sentMessages;

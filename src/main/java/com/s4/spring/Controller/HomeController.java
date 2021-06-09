@@ -1,11 +1,7 @@
 package com.s4.spring.Controller;
 
-import com.s4.spring.Entity.Tag;
-import com.s4.spring.Entity.User;
-import com.s4.spring.Entity.UserTag;
-import com.s4.spring.Repository.TagRepository;
-import com.s4.spring.Repository.UserRepository;
-import com.s4.spring.Repository.UserTagRepository;
+import com.s4.spring.Entity.*;
+import com.s4.spring.Repository.*;
 import com.s4.spring.Security.entity.MyUserDetails;
 import com.s4.spring.Services.TagServices;
 import org.apache.coyote.Request;
@@ -19,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.Authenticator;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Controller
 public class HomeController {
@@ -48,11 +46,20 @@ public class HomeController {
         return user;
     }*/
 
+    @Autowired
+    GroupRepository groupRepository;
+
     @RequestMapping(value = "/adduser", method = RequestMethod.POST)
     public String register(User user){
         user.setUsername(user.getEmail());
         userRepository.save(user);
         userRepository.flush();
+        Group group = new Group();
+        group.setName("Default");
+        group.setOwner(user);
+        group.setDescription("This is the default group");
+        groupRepository.saveAndFlush(group);
+
 
         return "redirect:/login";
     }
@@ -146,6 +153,55 @@ public class HomeController {
         return "createTag";
     }
 
+    @Autowired
+    TeamRepository teamRepository;
+
+    @RequestMapping(value =  "/CreateTeam")
+    public String team(Authentication authentication, Model model){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+
+        model.addAttribute("user",user);
+        return "NewTeam";
+    }
+
+    @RequestMapping(value =  "/addTeam")
+    public String addTeam(Authentication authentication, Model model, Team team){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        Team newTeam = new Team();
+        newTeam.setName(team.getName());
+        newTeam.setOwner(user);
+        Collection<Group> groups = user.getGroups();
+        newTeam.setMyGroup((Group) groups.toArray()[0]);
+        teamRepository.saveAndFlush(newTeam);
+
+        model.addAttribute("user",user);
+        return "NewTeam";
+    }
+
+    @RequestMapping(value =  "/addGroup")
+    public String addGroup(Authentication authentication, Model model, Group group){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        Group newGroup = new Group();
+        newGroup.setName(group.getName());
+        newGroup.setOwner(user);
+        groupRepository.saveAndFlush(group);
+
+        model.addAttribute("user",user);
+        return "NewGroup";
+    }
+
+    @RequestMapping(value =  "/Groups")
+    public String group(Authentication authentication, Model model){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+
+        model.addAttribute("user",user);
+        return "NewGroup";
+    }
+
     @RequestMapping(value =  "/deleteTag")
     public String deleteTag(Authentication authentication, Model model, Tag tag){
         MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
@@ -157,6 +213,28 @@ public class HomeController {
         model.addAttribute("user",user);
         model.addAttribute("tags",user.getOwnedTags());
         return "createTag";
+    }
+
+    @RequestMapping(value =  "/deleteTeam")
+    public String deleteTeam(Authentication authentication, Model model, Team team){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        Team newTeam = teamRepository.getTeamByName(team.getName());
+        teamRepository.delete(newTeam);
+        teamRepository.flush();
+
+        model.addAttribute("user",user);
+        model.addAttribute("teams",user.getTeams());
+        return "showTeams";
+    }
+
+    @RequestMapping(value = "/showTeams")
+    public String showTeam(Authentication authentication, Model model){
+        MyUserDetails principal = (MyUserDetails) authentication.getPrincipal();
+        User user = userRepository.findById(principal.getUserId()).get();
+        model.addAttribute("user",user);
+        model.addAttribute("teams",user.getTeams());
+        return "showTeams";
     }
 
 }
